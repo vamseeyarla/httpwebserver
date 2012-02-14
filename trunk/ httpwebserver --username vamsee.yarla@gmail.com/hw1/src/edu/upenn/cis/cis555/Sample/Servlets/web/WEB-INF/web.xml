@@ -72,7 +72,7 @@
       <description>
         This is a simple demonstration servlet.
       </description>
-      <servlet-class>DemoServlet</servlet-class>
+      <servlet-class>edu.upenn.cis.cis555.Sample.Servlets.src.DemoServlet</servlet-class>
       <!-- Load this servlet at server startup time -->
       <load-on-startup/>
     </servlet>
@@ -83,7 +83,7 @@
         This servlet checks for the context init parameter "webmaster" from
         above, and the servlet init parameter "TestParam" from below.
       </description>
-      <servlet-class>InitParamServlet</servlet-class>
+      <servlet-class>edu.upenn.cis.cis555.Sample.Servlets.src.InitParamServlet</servlet-class>
       <!-- Load this servlet at server startup time -->
       <init-param>
         <param-name>TestParam</param-name>
@@ -94,49 +94,49 @@
 
     <servlet>
       <servlet-name>session1</servlet-name>
-      <servlet-class>SessionServlet1</servlet-class>
+      <servlet-class>edu.upenn.cis.cis555.Sample.Servlets.src.SessionServlet1</servlet-class>
       <!-- Load this servlet at server startup time -->
       <load-on-startup/>
     </servlet>
 
     <servlet>
       <servlet-name>session2</servlet-name>
-      <servlet-class>SessionServlet2</servlet-class>
+      <servlet-class>edu.upenn.cis.cis555.Sample.Servlets.src.SessionServlet2</servlet-class>
       <!-- Load this servlet at server startup time -->
       <load-on-startup/>
     </servlet>
 
     <servlet>
       <servlet-name>session3</servlet-name>
-      <servlet-class>SessionServlet3</servlet-class>
+      <servlet-class>edu.upenn.cis.cis555.Sample.Servlets.src.SessionServlet3</servlet-class>
       <!-- Load this servlet at server startup time -->
       <load-on-startup/>
     </servlet>
 
     <servlet>
       <servlet-name>cookie1</servlet-name>
-      <servlet-class>CookieServlet1</servlet-class>
+      <servlet-class>edu.upenn.cis.cis555.Sample.Servlets.src.CookieServlet1</servlet-class>
       <!-- Load this servlet at server startup time -->
       <load-on-startup/>
     </servlet>
 
     <servlet>
       <servlet-name>cookie2</servlet-name>
-      <servlet-class>CookieServlet2</servlet-class>
+      <servlet-class>edu.upenn.cis.cis555.Sample.Servlets.src.CookieServlet2</servlet-class>
       <!-- Load this servlet at server startup time -->
       <load-on-startup/>
     </servlet>
 
     <servlet>
       <servlet-name>cookie3</servlet-name>
-      <servlet-class>CookieServlet3</servlet-class>
+      <servlet-class>edu.upenn.cis.cis555.Sample.Servlets.src.CookieServlet3</servlet-class>
       <!-- Load this servlet at server startup time -->
       <load-on-startup/>
     </servlet>
 
     <servlet>
       <servlet-name>busy</servlet-name>
-      <servlet-class>BusyServlet</servlet-class>
+      <servlet-class>edu.upenn.cis.cis555.Sample.Servlets.src.BusyServlet</servlet-class>
       <!-- Load this servlet at server startup time -->
       <load-on-startup/>
     </servlet>
