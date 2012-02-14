@@ -1,0 +1,25 @@
+Full name: Vamsee K. Yarlagadda
+SEAS login: vamsee
+
+Description of features implemented:
+HttpServer -- Starting class for server 
+ThreadPool -- To create all worker threads
+HandleReq -- To handle requests given from clients
+ServerHandler -- To handle all incoming requests from clients, accept it and proceed further.
+SocketVecQueue -- To put all sockets in queue and remove one by one for processing.
+
+Extra credits claimed:
+  None
+
+List of source files included (consider using `find src | grep java`)
+src/edu/upenn/cis/cis555/hw1/HttpServer.java
+src/edu/upenn/cis/cis555/hw1/ThreadPool.java
+src/edu/upenn/cis/cis555/hw1/HandleReq.java
+src/edu/upenn/cis/cis555/hw1/ServerHandler.java
+src/edu/upenn/cis/cis555/hw1/SocketVecQueue.java
+
+Outside sources used:
+  None
+
+Special instructions for building or running:
+Run HttpServer with 2 arguments, port followed by root directory.
