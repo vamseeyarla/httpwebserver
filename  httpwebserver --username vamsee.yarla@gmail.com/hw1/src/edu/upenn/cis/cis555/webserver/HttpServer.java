@@ -20,13 +20,14 @@ public class HttpServer implements Runnable {
     public static String source;
     public static void main(String[] args) {
         
+    	boolean threadPoolStatus=false, servletsInitStatus=false;
        	
          if(args.length==0)
          {
              System.out.println("Vamsee K. Yarlagadda   (vamsee)");
          }
         
-         else if(args.length<2 || args.length>2)
+         else if(args.length<2)
         {
             System.out.println("Invalid Set of Arguments");
             System.out.println("Failed to Start HttpServer");
@@ -40,10 +41,15 @@ public class HttpServer implements Runnable {
             {
                 System.out.println("The specified path does not exist or it is not a valid directory");
             }
+            else if((!(new File(args[2]).isFile())))
+            {
+            	System.out.println("The specified file web.xml does not exist");
+            }
                  
             else if(new ThreadPool().genThreads())
             {
                 source=args[1];
+                threadPoolStatus=true;
                 System.out.println("Threads Intialized");       
                 
                   try{
@@ -60,10 +66,23 @@ public class HttpServer implements Runnable {
             }
                   
             }
-            else
+            else if(threadPoolStatus==false)
             {
                 System.out.println("System cannot have necessary resources to start the required # of threads.");
                 System.out.println("Failed to start HttpServer");
+                new ThreadPool().killThreads();
+            }
+            
+            if(new ServletsInit().startServelts(args[2]))
+            {
+            	 servletsInitStatus=true;
+            	 System.out.println("Servlets Intialized");  
+            	 System.out.println("Open for Client Requests");
+            } 
+            else if(servletsInitStatus==false)
+            {
+            	System.out.println("System cannot have necessary resources to start all the servlets.");
+                System.out.println("Failed to start HttpServer with Servlets Functionality");
                 new ThreadPool().killThreads();
             }
              

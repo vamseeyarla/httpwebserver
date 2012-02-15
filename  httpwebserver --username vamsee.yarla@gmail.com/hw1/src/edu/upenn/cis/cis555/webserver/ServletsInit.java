@@ -1,5 +1,7 @@
-
-package edu.upenn.cis.cis555.TestHarnes;
+/**
+ * 
+ */
+package edu.upenn.cis.cis555.webserver;
 
 import java.io.File;
 import java.util.HashMap;
@@ -11,10 +13,17 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
+
+
+
+
 /**
- * @author Todd J. Green, modified by Nick Taylor
+ * @author VamseeKYarlagadda
+ *
  */
-public class TestHarness {	
+public class ServletsInit {
+	public static HashMap<String,HttpServlet> servlets; 
+	
 	static class Handler extends DefaultHandler {
 		public void startElement(String uri, String localName, String qName, Attributes attributes) {
 			if (qName.compareTo("servlet-name") == 0) {
@@ -85,18 +94,18 @@ public class TestHarness {
 		return h;
 	}
 	
-	private static FakeContext createContext(Handler h) {
-		FakeContext fc = new FakeContext();
+	private static ServletsContext createContext(Handler h) {
+		ServletsContext fc = new ServletsContext();
 		for (String param : h.m_contextParams.keySet()) {
 			fc.setInitParam(param, h.m_contextParams.get(param));
 		}
 		return fc;
 	}
 	
-	private static HashMap<String,HttpServlet> createServlets(Handler h, FakeContext fc) throws Exception {
+	private static HashMap<String,HttpServlet> createServlets(Handler h, ServletsContext fc) throws Exception {
 		HashMap<String,HttpServlet> servlets = new HashMap<String,HttpServlet>();
 		for (String servletName : h.m_servlets.keySet()) {
-			FakeConfig config = new FakeConfig(servletName, fc);
+			ServletsConfig config = new ServletsConfig(servletName, fc);
 			String className = h.m_servlets.get(servletName);
 			Class servletClass = Class.forName(className);
 			HttpServlet servlet = (HttpServlet) servletClass.newInstance();
@@ -111,35 +120,23 @@ public class TestHarness {
 		}
 		return servlets;
 	}
-
-	private static void usage() {
-		System.err.println("usage: java TestHarness <path to web.xml> " 
-				+ "[<GET|POST> <servlet?params> ...]");
-	}
 	
-	public static void main(String[] args) throws Exception {
-		if (args.length < 3 || args.length % 2 == 0) {
-			usage();
-			System.exit(-1);
-		}
+	public boolean startServelts(String args)
+	{
+		boolean status=false;
+try{
+		Handler h = parseWebdotxml(args);
+		ServletsContext context = createContext(h);
 		
-		Handler h = parseWebdotxml(args[0]);
-		FakeContext context = createContext(h);
+		servlets = createServlets(h, context);
 		
-		HashMap<String,HttpServlet> servlets = createServlets(h, context);
-		
-		FakeSession fs = null;
+		/*
+		ServletsSession fs = null;
 		
 		for (int i = 1; i < args.length - 1; i += 2) {
-			FakeRequest request = new FakeRequest(fs);
-			FakeResponse response = new FakeResponse();
+			ServletsRequest request = new ServletsRequest(fs);
+			ServletsResponse response = new ServletsResponse();
 			String[] strings = args[i+1].split("\\?|&|=");
-			
-			for(int ix=0;ix<strings.length;ix++)
-			{
-				System.out.println(strings[ix]);
-			}
-			
 			HttpServlet servlet = servlets.get(strings[0]);
 			if (servlet == null) {
 				System.err.println("error: cannot find mapping for servlet " + strings[0]);
@@ -153,13 +150,24 @@ public class TestHarness {
 				servlet.service(request, response);
 			} else {
 				System.err.println("error: expecting 'GET' or 'POST', not '" + args[i] + "'");
-				usage();
+				//usage();
 				System.exit(-1);
 			}
 			
-			fs = (FakeSession) request.getSession(false);
+			fs = (ServletsSession) request.getSession(false);
 			
 		}
+		*/
+		status=true;
 	}
+	
+	catch(Exception e)
+	{
+		status=false;
+		System.out.println(e.toString()+" ERROR IN SERVLET INIT");
+	}
+	
+		return status;
+	
 }
- 
+}
