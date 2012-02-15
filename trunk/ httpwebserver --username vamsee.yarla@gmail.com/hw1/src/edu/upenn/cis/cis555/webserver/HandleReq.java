@@ -15,13 +15,16 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
 import javax.activation.MimetypesFileTypeMap;
+import javax.servlet.http.HttpServlet;
 
 
 
@@ -34,19 +37,20 @@ import javax.activation.MimetypesFileTypeMap;
 public class HandleReq {
     Socket client;
     String met;
-
+    ArrayList<String> headers=new ArrayList<String>();
     String modDate=null;
 	int modifiedDate=0;
 
     public void parseReq(Socket req)
     {
+    //	System.out.println("Vamsee");
        String mainHeader=null;
        String tempHeader=null;
        client=req;
         int i=0;
         
         Scanner br=null;
-        int pointer=8;
+        int pointer=0;
       
          try {
 			Thread.currentThread().sleep(15);
@@ -63,7 +67,29 @@ public class HandleReq {
            mainHeader=null;
       	   temperHeader=br.nextLine();
       	   mainHeader=temperHeader;
-           try
+           headers.add(temperHeader);
+           
+           met=mainHeader.substring(0, mainHeader.indexOf(" ")).trim();
+           
+           boolean post=false;
+           if(mainHeader.indexOf("POST")!=-1)
+           {
+        	   post=true;
+        	   if(mainHeader.indexOf("POST")!=0)
+               {
+            	   mainHeader=null;
+            	   pointer=8;
+               }
+           }
+           
+   //        System.out.println("Krishna");
+           
+           
+           
+           
+           
+           
+      	   try
           {
 
         	   String temp;
@@ -72,6 +98,7 @@ public class HandleReq {
         	  
         	   while((temp=br.nextLine()).equalsIgnoreCase("")==false)
        		{
+        		headers.add(temp);  
        			if(temp.indexOf("Host:")!=-1 || temp.indexOf("host:")!=-1)
        			{
        				tracker=1;
@@ -95,9 +122,65 @@ public class HandleReq {
        				
        			}
        		}
+        	   
+        	   if(post && pointer!=8)
+        	   {
+        		   boolean lengthStatus=false;
+        		   
+        		   int iz;
+        		   int length;
+        		  for(iz=0;iz<headers.size();iz++)
+        		  {
+        			  if(headers.get(iz).indexOf("Content-Length:")!=-1)
+        			  {
+        				 lengthStatus=true;
+        				 break;
+        			  }
+        			  
+        		  }
+        		  if(!lengthStatus)
+        		  {
+        			  pointer=8;
+    				  mainHeader=null;
+        		  }
+        		  else
+        		  {
+        			 String len=headers.get(iz).substring(headers.get(iz).indexOf(":")+1);
+        			 len=len.trim();
+        			 try{
+        			 temp=br.nextLine();
+        			 length=Integer.parseInt(len);
+        			 
+        			 
+        			 
+        			
+        			 if(temp.length()!=length)
+        			 {
+        				 pointer=8;
+          				 mainHeader=null;
+        			 }
+        			 else{
+        		     headers.add(" ");
+        			 headers.add(temp);
+        			 }
+        			 
+        			 
+        			 }
+        			 catch(Exception e)
+        			 {
+        				 headers.add(" ");
+            			 headers.add(temp);
+        			 }
+        			 
+        		  }
+        		  
+        	   }
+        	   
+        	   
        		
         	   if(mainHeader!=null)
         	   {
+       // 		   System.out.println("Krishna1");
         		   pointer=headerErrorFn(temperHeader,tracker);
         	   }
         	 
@@ -107,9 +190,26 @@ public class HandleReq {
         //   e1.printStackTrace();
            }
          
+        
+           
+     
+      
+           
        if(mainHeader!=null && pointer==2){
-    	   
-       execReq(mainHeader);
+    //	   System.out.println("Krishna4");
+    	   boolean statDyn=isServlet();
+    //	   System.out.println("Krishna5");
+    	   if(statDyn)
+    	   {
+    //		   System.out.println("Krishna6");
+    		   //STATIC PAGE
+              execReq(mainHeader);
+    	   }
+    	   else
+    	   {
+    		   //DYNAMIC PAGE
+    		   //CALL TO SERVLET CODE
+    	   }
        }
                
        else if(pointer==8)
@@ -218,7 +318,7 @@ public class HandleReq {
         	   		bw.write("Connection: close\n");
         	   		bw.write("\n");
        
-        	   		if(met.equalsIgnoreCase("GET"))
+        	   		if(met.equalsIgnoreCase("GET") || met.equalsIgnoreCase("POST"))
         	   			bw.write("<html><head><title>Server Shutdown</title></head><body><h1>Server is Down</h1></body></html>\n".toString());
        
         new ThreadPool().killThreads();
@@ -258,6 +358,7 @@ public class HandleReq {
        }
        else if(file.equalsIgnoreCase("/control"))
        {
+    	   System.out.println("Krishna3");
            BufferedWriter bw=null;
               try{
                   
@@ -282,7 +383,7 @@ public class HandleReq {
        				bw.write("Connection: close\n");
        				bw.write("\n");
     
-       				if(met.equalsIgnoreCase("GET")){
+       				if(met.equalsIgnoreCase("GET") || met.equalsIgnoreCase("POST")){
        					bw.write("<html><head><title>Server Report</title></head>");
        
        					bw.write("<body><h1>             Server Report</h1>");
@@ -395,7 +496,7 @@ public class HandleReq {
        bw.write("Connection: close\n");
        bw.write("\n");
       
-       if(met.equalsIgnoreCase("GET"))
+       if(met.equalsIgnoreCase("GET") || met.equalsIgnoreCase("POST"))
        {
       
         bw.write("<html><head><title>Server Status</title></head>");
@@ -625,7 +726,7 @@ public class HandleReq {
              bw.write("Connection: close\n");
              bw.write("\n");
      
-             if(met.equalsIgnoreCase("GET")){
+             if(met.equalsIgnoreCase("GET") || met.equalsIgnoreCase("POST")){
             	 if(stat==0){
              bw.write("<html><head><title>Server Status</title></head><body>");
              bw.write("<h1>The path is a directory</h1></br>");
@@ -821,7 +922,7 @@ public class HandleReq {
              bw.write(("\n").toString().getBytes());
              
            
-             if(met.equalsIgnoreCase("GET")){
+             if(met.equalsIgnoreCase("GET") || met.equalsIgnoreCase("POST")){
             
             	 int x=Integer.parseInt(String.valueOf(reader.length()+1));
                  byte Bytes[]=new byte[x];
@@ -895,7 +996,7 @@ public class HandleReq {
              bw.write("Connection: close\n");
              bw.write("\n");
             
-            if(met.equalsIgnoreCase("GET")){
+             if(met.equalsIgnoreCase("GET") || met.equalsIgnoreCase("POST")){
             bw.write("<html><head><title>403 Forbidden</title></head><body>");
              bw.write("<h1>403 Forbidden</h1></br>");
              bw.write("<h3>The URL "+file+" is not under your privileges</h3></br>");
@@ -963,7 +1064,7 @@ public class HandleReq {
                   bw.write("Connection: close\n");
                   bw.write("\n");
                    
-       if(met.equalsIgnoreCase("GET")){
+                  if(met.equalsIgnoreCase("GET") || met.equalsIgnoreCase("POST")){
                    bw.write("<html><head><title>404 Not Found</title></head><body>");
                     bw.write("<h1>404 Not Found</h1></br>");
                     bw.write("<h3>The URL "+file+" is not found on the server</h3></br>");
@@ -1028,7 +1129,7 @@ public class HandleReq {
                       bw.write("Connection: close\n");
                       bw.write("\n");
                        
-           if(met.equalsIgnoreCase("GET")){
+                      if(met.equalsIgnoreCase("GET") || met.equalsIgnoreCase("POST")){
                        bw.write("<html><head><title>500 Internel Server Error</title></head><body>");
                        bw.write("<h1>500 Internel Server error while displaying file/directory info</h1></br>");
                        bw.write("</body></html>");
@@ -1083,12 +1184,12 @@ public class HandleReq {
     		pointer=0;
     	}
     	    	
-    	else if((header.indexOf(" HTTP/1.1")==-1 && header.indexOf(" HTTP/1.0")==-1) && ((header.indexOf("GET ")!=-1) || header.indexOf("HEAD ")!=-1))
+    	else if((header.indexOf(" HTTP/1.1")==-1 && header.indexOf(" HTTP/1.0")==-1) && ((header.indexOf("GET ")!=-1) || (header.indexOf("HEAD ")!=-1) || (header.indexOf("POST ")!=-1)))
     	{
     		header="HTTP/1.0";
     		pointer=0;
     	}
-    	else if ((header.indexOf("GET ")==-1) && header.indexOf("HEAD ")==-1)
+    	else if ((header.indexOf("GET ")==-1) && header.indexOf("HEAD ")==-1 && header.indexOf("POST ")==-1)
     	{    	   	
     	if ((header.indexOf(" HTTP/1.0")==-1 && header.indexOf(" HTTP/1.1")!=-1))
     	{
@@ -1136,7 +1237,7 @@ public class HandleReq {
                bw.write("Connection: close\n");
                 bw.write("\n");
                 
-    if(met.equalsIgnoreCase("GET")){
+    if(met.equalsIgnoreCase("GET") || met.equalsIgnoreCase("POST")){
     	if(pointer==0)
     	{
                 bw.write("<html><head><title>400 Bad Request</title></head><body>");
@@ -1176,12 +1277,141 @@ public class HandleReq {
 	   
 	   
 
+       public boolean isServlet()
+       {
+    	//   System.out.println("Krishna2");
+    	   String url=null;
+    	   String arguments=null;
+    	   String encoding=null;
+    	   
+    	   if(met.equalsIgnoreCase("GET"))
+    	   {
+    		//   System.out.println("Krishna5");
+    		  String[] head=headers.get(0).split(" ");
+    		//   System.out.println("Krishna5.5");
+    		   
+    		   System.out.println(head[1]);
+    		   String[] params;
+    		   if(head[1].indexOf("?")!=-1)
+    		   {
+    		   params=new String[2];
+    		   params[0]=head[1].substring(0,head[1].indexOf("?"));
+    		   params[1]=head[1].substring(head[1].indexOf("?")+1).trim();
+    		   }
+    		   else
+    		   {
+    			   params=new String[1];
+        		   params[0]=head[1];	  
+    		   }
+    		   
+    		//   System.out.println("Krishna6");
+    		  if(params.length>1)
+    		  {
+    			  url=params[0].substring(params[0].indexOf("/")+1);
+    			 
+    			  arguments=params[1];
+    	      }
+    		  else
+    		  {
+    			  url=params[0].substring(params[0].indexOf("/")+1);
+     			 
+    		  }
+    		  // System.out.println("Krishna8");
+    		          
+    	   }
+    	   else if(met.equalsIgnoreCase("POST"))
+    	   {
+    		   for(int ix=0;ix<headers.size();ix++)
+    		   {
+    			  if(ix==0)
+    			  {
+    				  String[] head=headers.get(0).split(" ");
+    	    		  
+    	    		  url=head[1].substring(head[1].indexOf("/")+1);
+    	    		  
+    			  }
+    	     	   else if(headers.get(ix).indexOf("Content-Type:")!=-1)
+    			   {
+    				   // DO STIFF TO LOAD ENCODING
+    			   }
+    			   else if(headers.get(ix).equalsIgnoreCase(" "))
+    			   {
+    				   arguments=headers.get(ix+1);
+    			   }
+    		   }
+    	   }
+    	   
+    	   System.out.println(url);
+    	   
+    	   
+    	   HttpServlet servlet = ServletsInit.servlets.get(url);
+			if (servlet == null) {
+				return true;
+			}
+			else
+			{
+				
+			try{
+				ServletsSession fs = null;
+				
+				ServletsRequest request=populateRequest(met,url,arguments,encoding,fs);
+			//	ServletsResponse response=populateResponse();
+				
+			//	ServletsRequest request = new ServletsRequest(fs);
+				ServletsResponse response = new ServletsResponse();
+		    // 	request.setMethod(met);
+				servlet.service(request, response);
+				fs = (ServletsSession) request.getSession(false);
+		    	   
+		    	  
+				}
+				catch(Exception e)
+				{
+					System.out.println(e.toString()+" ERROR IN SERVLET EXEC");
+				}
+				 return false;
+			}
+			
+       }
+       
+       
+    public ServletsRequest populateRequest(String method,String url, String parameters,String encoding,ServletsSession fs)
+    {
+    	ServletsRequest req=new ServletsRequest(fs);
+    	req.setMethod(method);
+    	if(parameters!=null)
+    	{
+    		String []params=parameters.split("\\?|&|=");
+    		for(int i=0;i<params.length;i=i+2)
+    		{
+    			req.setParameter(params[i], params[i+1]);
+    		}		
+    	}
+    	
+    	if(encoding!=null)
+    	{
+    		try {
+				req.setCharacterEncoding(encoding);
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	return req;
+    }
+
        
        
        
-    
-    
-    
 }//HandleReq class close
 
 

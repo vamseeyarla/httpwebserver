@@ -37,9 +37,10 @@ public class ServerHandler {
                      serverPort=args;
                      System.out.println("Server Started at local host at the port: "+args);
                      
-                      System.out.println("Open for Client Requests");
+                   //   System.out.println("Open for Client Requests");
                      while(true)
                      {
+                    	
                          // System.out.println(ThreadPool.threadQueueHandleStatus);
                              if(ThreadPool.threadQueueHandleStatus==true)
                              {
