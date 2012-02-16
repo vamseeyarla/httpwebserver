@@ -78,7 +78,7 @@ public class HttpServer implements Runnable {
             {
             	 servletsInitStatus=true;
             	 xml=args[2];
-            	 if(xml.charAt(xml.length()-1)=='\\')
+            	 if(xml.charAt(xml.length()-1)=='\\' || xml.charAt(xml.length()-1)=='/')
             	 {
             		 xml=xml.substring(0, xml.length()-1);
             	 }
