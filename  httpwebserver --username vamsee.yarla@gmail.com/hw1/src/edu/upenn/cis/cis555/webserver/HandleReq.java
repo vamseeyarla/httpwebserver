@@ -1639,7 +1639,7 @@ public class HandleReq {
     		
     		//getRemotePort
     		String portAndLocal=client.toString().substring(client.toString().indexOf(",")+6);
-    		String remoteport=portAndLocal.substring(0,portAndLocal.indexOf(",")-1);
+    		String remoteport=portAndLocal.substring(0,portAndLocal.indexOf(","));
     		req.RemotePort=Integer.parseInt(remoteport);
     		
     		//getRemoteUser
