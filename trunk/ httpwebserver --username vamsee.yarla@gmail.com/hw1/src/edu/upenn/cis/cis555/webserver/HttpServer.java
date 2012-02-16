@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 public class HttpServer implements Runnable {
     
     public static String source;
+    public static String xml;
     public static void main(String[] args) {
         
     	boolean threadPoolStatus=false, servletsInitStatus=false;
@@ -76,6 +77,12 @@ public class HttpServer implements Runnable {
             if(new ServletsInit().startServelts(args[2]))
             {
             	 servletsInitStatus=true;
+            	 xml=args[2];
+            	 if(xml.charAt(xml.length()-1)=='\\')
+            	 {
+            		 xml=xml.substring(0, xml.length()-1);
+            	 }
+            	 System.out.println(xml);
             	 System.out.println("Servlets Intialized");  
             	 System.out.println("Open for Client Requests");
             } 
