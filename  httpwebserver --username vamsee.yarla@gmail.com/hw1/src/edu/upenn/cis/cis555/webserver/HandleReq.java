@@ -1385,12 +1385,24 @@ public class HandleReq {
     	    String relativePath=null;
     		String absolutePath=null;
     		String servletName=null;
+    		
+    		if(HttpServer.xml.indexOf("\\")!=-1)
+    		{
     		absolutePath=HttpServer.xml.substring(0, HttpServer.xml.lastIndexOf("\\")+1);
     		absolutePath=absolutePath.concat("classes\\");
     		absolutePath=absolutePath.concat(url);
-    		
     		servletName=url;
-    		relativePath="/".concat(url);
+    		relativePath="\\".concat(url);
+    		}
+    		else
+    		{
+    			absolutePath=HttpServer.xml.substring(0, HttpServer.xml.lastIndexOf("/")+1);
+        		absolutePath=absolutePath.concat("classes/");
+        		absolutePath=absolutePath.concat(url);
+        		servletName=url;
+        		relativePath="/".concat(url);
+    		}
+    		
     		
     		String acceptHead=null,acceptCharsetHead=null,acceptEncodingHead=null,acceptLanguageHead=null,cacheControlHead=null,connectionHead=null,dataHead=null,dateHead=null,hostHead=null,ifModSinceHead=null,ifUnmodSinceHead=null,pragmaHead=null,refererHead=null,transferEncodingHead=null,userAgentHead=null,contentLengthHead=null,contentTypeHead=null;
     		
@@ -1573,7 +1585,7 @@ public class HandleReq {
     		req.LocalName="HTTPServer";
     		    		
     		//getLocalPort
-    		req.LocalPort=Integer.parseInt(client.toString().substring(client.toString().indexOf("localhost")+10,client.toString().length()-1));
+    		req.LocalPort=Integer.parseInt(client.toString().substring(client.toString().indexOf("localport")+10,client.toString().length()-1));
     		    		
     		    		
     		//getMethod
@@ -1643,7 +1655,7 @@ public class HandleReq {
     		req.ServerName="HTTPServer";
     		
     		//getServerPort
-    		req.ServerPort = Integer.parseInt(client.toString().substring(client.toString().indexOf("localhost")+10,client.toString().length()-1));
+    		req.ServerPort = Integer.parseInt(client.toString().substring(client.toString().indexOf("localport")+10,client.toString().length()-1));
     		
     		//getServletPath
     		req.ServletPath=absolutePath;
