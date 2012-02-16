@@ -5,10 +5,17 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Vector;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletInputStream;
@@ -21,6 +28,34 @@ import javax.servlet.http.HttpSession;
  */
 class ServletsRequest implements HttpServletRequest {
 
+	public String AuthType=null;
+	public String CharacterEncoding=null;
+	public int ContentLength;
+	public String ContentType=null;
+	public String ContextPath=null;
+	public String DateHeader=null;
+	public Hashtable<String,String> heads=new Hashtable<String,String>();
+	public String LocalAddr=null;
+	public String LocalName=null;
+	public int LocalPort;
+	public String RemoteAddr=null;
+	public String RemoteName=null;
+	public String RemoteHost=null;
+	public String RemoteUser=null;
+	public int RemotePort;
+	public Locale Localex=null;
+	public String PathInfo=null;
+	public String PathInfoTranslated=null;
+	public String Protocol;
+	public String QueryString=null;
+	public String uri;
+	public String url;
+	public String Scheme;
+	public String ServerName;
+	public int ServerPort;
+	public String ServletPath;
+	
+	
 	ServletsRequest() {
 	}
 	
@@ -33,7 +68,7 @@ class ServletsRequest implements HttpServletRequest {
 	 */
 	public String getAuthType() {
 		// TODO Auto-generated method stub
-		return null;
+		return AuthType;
 	}
 
 	/* (non-Javadoc)
@@ -48,40 +83,69 @@ class ServletsRequest implements HttpServletRequest {
 	 * @see javax.servlet.http.HttpServletRequest#getDateHeader(java.lang.String)
 	 */
 	public long getDateHeader(String arg0) {
-		// TODO Auto-generated method stub
-		return 0;
+		
+		arg0=arg0.substring(0,arg0.length()-4);
+		
+		
+		DateFormat sysformatter=new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss");
+		Date userdate=null;
+		try {
+		
+			userdate=sysformatter.parse(arg0);
+	    	   	 
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    
+		
+		return Time.UTC(userdate.getYear(), userdate.getMonth(), userdate.getDate(), userdate.getHours(), userdate.getMinutes(), userdate.getSeconds());
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.servlet.http.HttpServletRequest#getHeader(java.lang.String)
 	 */
 	public String getHeader(String arg0) {
-		// TODO Auto-generated method stub
-		return null;
+				
+		return heads.get(arg0.toLowerCase());
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.servlet.http.HttpServletRequest#getHeaders(java.lang.String)
 	 */
 	public Enumeration getHeaders(String arg0) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		Enumeration e;
+		Vector<String> v=new Vector<String>();
+		v.add(heads.get(arg0.toLowerCase()));
+		e=v.elements();
+		return e;
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.servlet.http.HttpServletRequest#getHeaderNames()
 	 */
 	public Enumeration getHeaderNames() {
-		// TODO Auto-generated method stub
-		return null;
+				
+		Enumeration e;
+		e=heads.keys();
+		return e;
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.servlet.http.HttpServletRequest#getIntHeader(java.lang.String)
 	 */
-	public int getIntHeader(String arg0) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int getIntHeader(String arg0){
+		
+		if(heads.get(arg0.toLowerCase())!=null)
+		{
+			return Integer.parseInt(heads.get(arg0.toLowerCase()));
+		}
+		else
+		{
+			return -1;
+		}
+		
 	}
 
 	/* (non-Javadoc)
@@ -96,7 +160,7 @@ class ServletsRequest implements HttpServletRequest {
 	 */
 	public String getPathInfo() {
 		// TODO Auto-generated method stub
-		return null;
+		return PathInfo;
 	}
 
 	/* (non-Javadoc)
@@ -104,7 +168,7 @@ class ServletsRequest implements HttpServletRequest {
 	 */
 	public String getPathTranslated() {
 		// TODO Auto-generated method stub
-		return null;
+		return PathInfoTranslated;
 	}
 
 	/* (non-Javadoc)
@@ -112,7 +176,7 @@ class ServletsRequest implements HttpServletRequest {
 	 */
 	public String getContextPath() {
 		// TODO Auto-generated method stub
-		return null;
+		return ContextPath;
 	}
 
 	/* (non-Javadoc)
@@ -120,7 +184,7 @@ class ServletsRequest implements HttpServletRequest {
 	 */
 	public String getQueryString() {
 		// TODO Auto-generated method stub
-		return null;
+		return QueryString;
 	}
 
 	/* (non-Javadoc)
@@ -128,7 +192,7 @@ class ServletsRequest implements HttpServletRequest {
 	 */
 	public String getRemoteUser() {
 		// TODO Auto-generated method stub
-		return null;
+		return RemoteUser;
 	}
 
 	/* (non-Javadoc)
@@ -160,7 +224,7 @@ class ServletsRequest implements HttpServletRequest {
 	 */
 	public String getRequestURI() {
 		// TODO Auto-generated method stub
-		return null;
+		return uri;
 	}
 
 	/* (non-Javadoc)
@@ -168,7 +232,9 @@ class ServletsRequest implements HttpServletRequest {
 	 */
 	public StringBuffer getRequestURL() {
 		// TODO Auto-generated method stub
-		return null;
+		StringBuffer sb=new StringBuffer();
+		sb.append(url);
+		return sb;
 	}
 
 	/* (non-Javadoc)
@@ -255,7 +321,14 @@ class ServletsRequest implements HttpServletRequest {
 	 */
 	public String getCharacterEncoding() {
 		// TODO Auto-generated method stub
-		return null;
+		if(CharacterEncoding==null)
+		{
+			return "ISO-8859-1";
+		}
+		else
+		{
+			return CharacterEncoding;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -263,6 +336,7 @@ class ServletsRequest implements HttpServletRequest {
 	 */
 	public void setCharacterEncoding(String arg0)
 			throws UnsupportedEncodingException {
+		CharacterEncoding=arg0;
 		// TODO Auto-generated method stub
 
 	}
@@ -272,7 +346,7 @@ class ServletsRequest implements HttpServletRequest {
 	 */
 	public int getContentLength() {
 		// TODO Auto-generated method stub
-		return 0;
+		return ContentLength;
 	}
 
 	/* (non-Javadoc)
@@ -280,7 +354,8 @@ class ServletsRequest implements HttpServletRequest {
 	 */
 	public String getContentType() {
 		// TODO Auto-generated method stub
-		return null;
+		
+		return ContentType;
 	}
 
 	/* (non-Javadoc)
@@ -309,8 +384,15 @@ class ServletsRequest implements HttpServletRequest {
 	 * @see javax.servlet.ServletRequest#getParameterValues(java.lang.String)
 	 */
 	public String[] getParameterValues(String arg0) {
-		// TODO Auto-generated method stub
-		return null;
+		String temp=m_params.getProperty(arg0);
+		
+		if(temp!=null)
+		{
+		temp=temp.concat(" ");
+		return temp.split(" ");
+		}
+		else
+			return null;
 	}
 
 	/* (non-Javadoc)
@@ -318,7 +400,7 @@ class ServletsRequest implements HttpServletRequest {
 	 */
 	public Map getParameterMap() {
 		// TODO Auto-generated method stub
-		return null;
+		return m_params;
 	}
 
 	/* (non-Javadoc)
@@ -326,7 +408,7 @@ class ServletsRequest implements HttpServletRequest {
 	 */
 	public String getProtocol() {
 		// TODO Auto-generated method stub
-		return null;
+		return Protocol;
 	}
 
 	/* (non-Javadoc)
@@ -334,7 +416,7 @@ class ServletsRequest implements HttpServletRequest {
 	 */
 	public String getScheme() {
 		// TODO Auto-generated method stub
-		return null;
+		return Scheme;
 	}
 
 	/* (non-Javadoc)
@@ -342,7 +424,7 @@ class ServletsRequest implements HttpServletRequest {
 	 */
 	public String getServerName() {
 		// TODO Auto-generated method stub
-		return null;
+		return ServerName;
 	}
 
 	/* (non-Javadoc)
@@ -350,7 +432,7 @@ class ServletsRequest implements HttpServletRequest {
 	 */
 	public int getServerPort() {
 		// TODO Auto-generated method stub
-		return 0;
+		return ServerPort;
 	}
 
 	/* (non-Javadoc)
@@ -366,7 +448,7 @@ class ServletsRequest implements HttpServletRequest {
 	 */
 	public String getRemoteAddr() {
 		// TODO Auto-generated method stub
-		return null;
+		return RemoteAddr;
 	}
 
 	/* (non-Javadoc)
@@ -374,7 +456,7 @@ class ServletsRequest implements HttpServletRequest {
 	 */
 	public String getRemoteHost() {
 		// TODO Auto-generated method stub
-		return null;
+		return RemoteHost;
 	}
 
 	/* (non-Javadoc)
@@ -388,7 +470,7 @@ class ServletsRequest implements HttpServletRequest {
 	 * @see javax.servlet.ServletRequest#removeAttribute(java.lang.String)
 	 */
 	public void removeAttribute(String arg0) {
-		// TODO Auto-generated method stub
+		m_props.remove(arg0);
 
 	}
 
@@ -396,10 +478,19 @@ class ServletsRequest implements HttpServletRequest {
 	 * @see javax.servlet.ServletRequest#getLocale()
 	 */
 	public Locale getLocale() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return Localex;
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.servlet.ServletRequest#setLocale()
+	 */
+	
+	public void setLocale(Locale arg0) {
+		
+		Localex=arg0;
+	}
+	
 	/* (non-Javadoc)
 	 * @see javax.servlet.ServletRequest#getLocales()
 	 */
@@ -437,7 +528,7 @@ class ServletsRequest implements HttpServletRequest {
 	 */
 	public int getRemotePort() {
 		// TODO Auto-generated method stub
-		return 0;
+		return RemotePort;
 	}
 
 	/* (non-Javadoc)
@@ -445,7 +536,7 @@ class ServletsRequest implements HttpServletRequest {
 	 */
 	public String getLocalName() {
 		// TODO Auto-generated method stub
-		return null;
+		return LocalName;
 	}
 
 	/* (non-Javadoc)
@@ -453,7 +544,7 @@ class ServletsRequest implements HttpServletRequest {
 	 */
 	public String getLocalAddr() {
 		// TODO Auto-generated method stub
-		return null;
+		return LocalAddr;
 	}
 
 	/* (non-Javadoc)
@@ -461,7 +552,7 @@ class ServletsRequest implements HttpServletRequest {
 	 */
 	public int getLocalPort() {
 		// TODO Auto-generated method stub
-		return 0;
+		return LocalPort;
 	}
 
 	void setMethod(String method) {

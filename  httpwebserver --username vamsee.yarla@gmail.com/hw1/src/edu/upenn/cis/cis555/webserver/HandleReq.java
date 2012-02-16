@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServlet;
  * @author VamseeKYarlagadda
  */
 
+
 public class HandleReq {
     Socket client;
     String met;
@@ -1341,7 +1342,8 @@ public class HandleReq {
     		   }
     	   }
     	   
-    	   System.out.println(url);
+    	    System.out.println(url);
+    	    
     	   
     	   
     	   HttpServlet servlet = ServletsInit.servlets.get(url);
@@ -1378,28 +1380,300 @@ public class HandleReq {
     public ServletsRequest populateRequest(String method,String url, String parameters,String encoding,ServletsSession fs)
     {
     	ServletsRequest req=new ServletsRequest(fs);
-    	req.setMethod(method);
-    	if(parameters!=null)
-    	{
-    		String []params=parameters.split("\\?|&|=");
-    		for(int i=0;i<params.length;i=i+2)
+    	
+    	
+    	    String relativePath=null;
+    		String absolutePath=null;
+    		String servletName=null;
+    		absolutePath=HttpServer.xml.substring(0, HttpServer.xml.lastIndexOf("\\")+1);
+    		absolutePath=absolutePath.concat("classes\\");
+    		absolutePath=absolutePath.concat(url);
+    		
+    		servletName=url;
+    		relativePath="/".concat(url);
+    		
+    		String acceptHead=null,acceptCharsetHead=null,acceptEncodingHead=null,acceptLanguageHead=null,cacheControlHead=null,connectionHead=null,dataHead=null,dateHead=null,hostHead=null,ifModSinceHead=null,ifUnmodSinceHead=null,pragmaHead=null,refererHead=null,transferEncodingHead=null,userAgentHead=null,contentLengthHead=null,contentTypeHead=null;
+    		
+    		for(int ix=1;ix<headers.size();ix++)
     		{
-    			req.setParameter(params[i], params[i+1]);
-    		}		
-    	}
+    			String []temp=headers.get(ix).split(":");
+    			String header=temp[0].trim();
+    		
+    			req.heads.put(header.toLowerCase(), temp[1].trim());
+    		/*	if(header.indexOf("-")!=-1)
+    			{
+    				String[] temps=header.split("-");
+    				header="";
+    				for(int iws=0;iws<temps.length;iws++)
+    				{
+    					header.concat(temps[iws]);
+    				}
+    			}
+    		*/
+    			
+    			if(header.equalsIgnoreCase("Accept"))
+    			{
+    				acceptHead=headers.get(ix);
+    			}
+    			else if(header.equalsIgnoreCase("Accept-Charset"))
+    			{
+    				acceptCharsetHead=headers.get(ix);
+    			}
+    			else if(header.equalsIgnoreCase("Accept-Encoding"))
+    			{
+    				acceptEncodingHead=headers.get(ix);
+    			}
+    			else if(header.equalsIgnoreCase("Accept-Language"))
+    			{
+    				acceptLanguageHead=headers.get(ix);
+    			}
+    			else if(header.equalsIgnoreCase("Host"))
+    			{
+    				hostHead=headers.get(ix);
+    			}
+    			else if(header.equalsIgnoreCase("If-Modified-Since"))
+    			{
+    				ifModSinceHead=headers.get(ix);
+    			}
+    			else if(header.equalsIgnoreCase("If-Unmodified-Since"))
+    			{
+    				ifUnmodSinceHead=headers.get(ix);
+    			}
+    			else if(header.equalsIgnoreCase("Referer"))
+    			{
+    				refererHead=headers.get(ix);
+    			}
+    			else if(header.equalsIgnoreCase("User-Agent"))
+    			{
+    				userAgentHead=headers.get(ix);
+    			}
+    			else if(header.equalsIgnoreCase("Cache-Control"))
+    			{
+    				cacheControlHead=headers.get(ix);
+    			}
+    			else if(header.equalsIgnoreCase("Connection"))
+    			{
+    				connectionHead=headers.get(ix);
+    			}
+    			else if(header.equalsIgnoreCase("Date"))
+    			{
+    				dateHead=headers.get(ix);
+    			}
+    			else if(header.equalsIgnoreCase("Pragma"))
+    			{
+    				pragmaHead=headers.get(ix);
+    			}
+    			else if(header.equalsIgnoreCase("Transfer-Encoding"))
+    			{
+    				transferEncodingHead=headers.get(ix);
+    			}
+    			else if(header.equalsIgnoreCase("Content-Length"))
+    			{
+    				contentLengthHead=headers.get(ix);
+    			}
+    			else if(header.equalsIgnoreCase("Content-Type"))
+    			{
+    				contentTypeHead=headers.get(ix);
+    			}
+    			else if(header.equalsIgnoreCase(" "))
+    			{
+    				dataHead=headers.get(ix+1);
+    				ix++;
+    			}
+    				
+    			
+    		}//FOR LOOP FOR HEADERS
+    		
+    		
+    		    		
+    		//getAttribute
+    		// TODO
+    		
+    		
+    		//getAttributeNames
+    		// TODO
+    			
+    		//getAuthType
+    		req.AuthType=req.BASIC_AUTH;
+    		
+    		//getCharacterEncoding
+    		if(encoding!=null)
+        	{
+        		try {
+    				req.setCharacterEncoding(encoding);
+    			} catch (UnsupportedEncodingException e) {
+    				System.out.println(e.toString() +" Error in putting encoding");
+    				e.printStackTrace();
+    			}
+        	}
+    		
+    		//getClass
+    		//TODO
+    		
+    		//getContentLength
+    		if(!met.equalsIgnoreCase("POST"))
+    		{
+    			req.ContentLength=-1;
+    		}
+    		else
+    		{
+    			try{
+    			String x=contentLengthHead.substring(contentLengthHead.indexOf(":")+1).trim();
+    			
+    			req.ContentLength=Integer.parseInt(x);
+    			}
+    			catch(Exception e)
+    			{
+    				req.ContentLength=200;
+    			}
+    		}
+    		
+    		//getContentType
+    		if(contentTypeHead!=null)
+    		{
+    		req.ContentType=contentTypeHead.substring(contentTypeHead.indexOf(":")+1).trim();
+    		}
+    		
+    		//getContextPath
+    		req.ContextPath="/";
+    		
+    		//getCookies
+    		//TODO
+    		
+    		//getDateHeader(String)
+    		if(ifModSinceHead!=null)
+    		{
+    			req.DateHeader=ifModSinceHead.substring(ifModSinceHead.indexOf(":")+1).trim();
+       		}
+    		
+    		//getHeader(String)
+    		//FINISHED
+    		
+    		//getHeaderNames
+    		//FINISHED
+    		
+    		//getHeaders(String)
+    		//FINISHED
+    		
+    	    //getIntHeader(String)
+    		//FINSIHED
+    		
+    		System.out.println(client);
+    		
+    		//getLocalAddr
+    		req.LocalAddr=client.toString().substring(client.toString().indexOf("/")+1, client.toString().indexOf(","));
+    		
+    		//getLocale
+    		//FINSIHED
+    		
+    		//getLocales
+    		//FINSIHED
+    		
+    		//getLocalName
+    		req.LocalName="HTTPServer";
+    		    		
+    		//getLocalPort
+    		req.LocalPort=Integer.parseInt(client.toString().substring(client.toString().indexOf("localhost")+10,client.toString().length()-1));
+    		    		
+    		    		
+    		//getMethod
+    		req.setMethod(method);
+    		
+    		
+    		//getParameter(String)
+    		//FINISHED
+    		if(parameters!=null)
+        	{
+        		String []params=parameters.split("\\?|&|=");
+        		for(int i=0;i<params.length;i=i+2)
+        		{
+        			req.setParameter(params[i], params[i+1]);
+        		}		
+        	}
+    		//getParameterNames
+    		//FINSIHED
+    		
+    		//getParameterValues(String)
+    		//FINSIHED
+    		
+    		//getParamaterMap
+    		//FINSIHED
+    		
+    		//getPathInfo
+    		//TODO
+    		req.PathInfo=null;
+    		
+    		//getPathTranslated
+    		req.PathInfoTranslated=null;
+    		
+    		//getProtocol
+    		req.Protocol=headers.get(0).split(" ")[2];
+    		
+    		//getQueryString
+    		if(met.equalsIgnoreCase("GET"))
+    		req.QueryString=parameters;
+    		
+    		//getReader
+    		//TODO
+    		
+    		//getRealPath(String)
+    		//TODO
+    		
+    		//getRemoteAddr
+    		req.RemoteAddr=client.toString().substring(client.toString().indexOf("/")+1, client.toString().indexOf(","));
+    		
+    		//getRemoteHost
+    		req.RemoteHost=client.toString().substring(client.toString().indexOf("/")+1, client.toString().indexOf(","));
+    		
+    		//getRemotePort
+    		String portAndLocal=client.toString().substring(client.toString().indexOf(",")+6);
+    		String remoteport=portAndLocal.substring(0,portAndLocal.indexOf(",")-1);
+    		req.RemotePort=Integer.parseInt(remoteport);
+    		
+    		//getRemoteUser
+    		req.RemoteUser=null;
+    		
+    		//getRequestSessionID
+    		//TODO
+    		
+    		//getScheme
+    		req.Scheme="http";
+    		
+    		//getServerName
+    		req.ServerName="HTTPServer";
+    		
+    		//getServerPort
+    		req.ServerPort = Integer.parseInt(client.toString().substring(client.toString().indexOf("localhost")+10,client.toString().length()-1));
+    		
+    		//getServletPath
+    		req.ServletPath=absolutePath;
+    		
+    		//getSession
+    		//TODO
+    		
+    		
+    		
+    		
+    		//getRequestURI
+    		//getRequestURL
+    		String []no=headers.get(0).split(" ");
+    		if(no[1].indexOf("?")!=-1)
+    		{
+    			req.uri=no[1].substring(0, no[1].indexOf("?"));
+    			req.url="http://"+"localhost"+":"+req.ServerPort+req.uri;
+    		}
+    		else
+    		{
+    			req.uri=no[1];
+    			req.url="http://"+"localhost"+":"+req.ServerPort+req.uri;
+    		}
+    		
+    		
+    		
+    		
     	
-    	if(encoding!=null)
-    	{
-    		try {
-				req.setCharacterEncoding(encoding);
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-    	}
     	
-    	
-    	
+    
     	
     	
     	
