@@ -11,7 +11,8 @@ public class DemoServlet extends HttpServlet {
 		out.println("<HTML><HEAD><TITLE>Simple Servlet</TITLE></HEAD><BODY>");
 		out.println("<P>Hello!</P>");
 		out.println("</BODY></HTML>");		
-		System.out.println("VAMSEE KRISHNA");
+		/*
+		 System.out.println("VAMSEE KRISHNA");
 	//	 System.out.println(request.getAsyncContext());
          System.out.println(request.getAttributeNames().toString());
          System.out.println(request.getAuthType());
@@ -20,7 +21,7 @@ public class DemoServlet extends HttpServlet {
          System.out.println(request.getContentLength());
          System.out.println(request.getContentType());
          System.out.println(request.getContextPath());
-   //      System.out.println(request.getDateHeader("Date"));
+    //   System.out.println(request.getDateHeader("Date"));
          System.out.println(request.getHeader("Host:"));
          
         
@@ -57,7 +58,7 @@ public class DemoServlet extends HttpServlet {
          System.out.println(request.getSession(false));
          System.out.println("VAMSEE");
          System.out.println(request.getServletPath());
-		
+		*/
 		
 	}
 }
