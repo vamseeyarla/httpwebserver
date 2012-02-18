@@ -21,9 +21,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Scanner;
 
 import javax.activation.MimetypesFileTypeMap;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
 
 
@@ -245,8 +247,8 @@ public class HandleReq {
              try {
 				client.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-		//		e.printStackTrace();
+				
+				e.printStackTrace();
 			}
    		//  ex.printStackTrace();
         }
@@ -256,7 +258,7 @@ public class HandleReq {
         
 				br.close();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
+			
 		//		e.printStackTrace();
 			}
          }
@@ -288,7 +290,7 @@ public class HandleReq {
            try {
 			client.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			//e.printStackTrace();
 		}
       }
@@ -338,7 +340,7 @@ public class HandleReq {
         		   bw.close();
 				 
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				
 				//e.printStackTrace();
 
       	//	  e.printStackTrace();
@@ -348,7 +350,7 @@ public class HandleReq {
 				 try {
 					client.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+					
 			//		e.printStackTrace();
 				}
 			}
@@ -446,7 +448,7 @@ public class HandleReq {
         		   bw.close();
 				 
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				
 
      			//e.printStackTrace();
 			}
@@ -455,7 +457,7 @@ public class HandleReq {
 				 try {
 					client.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+					
 	//				e.printStackTrace();
 				}
 			}
@@ -521,7 +523,7 @@ public class HandleReq {
         		   bw.close();
 				 
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				
 	//			e.printStackTrace();
 			}
 			finally
@@ -529,7 +531,7 @@ public class HandleReq {
 				 try {
 					client.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+				
 		//			e.printStackTrace();
 				}
 			}
@@ -627,7 +629,7 @@ public class HandleReq {
         	   try {
 				client.close();
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
+				
 		//		e1.printStackTrace();
 			}
     // 		  e.printStackTrace();
@@ -719,7 +721,8 @@ public class HandleReq {
              
              Date myDate=new Date(reader.lastModified());
             
-            DateFormat formatter=new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss");
+            
+			DateFormat formatter=new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss");
      	   	String formattedDate=headformatter.format(myDate).concat(" GMT");
              
              bw.write("Last-Modified: "+formattedDate+"\n");
@@ -778,7 +781,7 @@ public class HandleReq {
         		   bw.close();
 				 
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				
 		//		e.printStackTrace();
 			}
 			finally
@@ -786,7 +789,7 @@ public class HandleReq {
 				 try {
 					client.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+				
 			//		e.printStackTrace();
 				}
 			}
@@ -952,7 +955,7 @@ public class HandleReq {
         		   bw.close();
 				 
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				
 		//		e.printStackTrace();
 			}
 			finally
@@ -960,7 +963,7 @@ public class HandleReq {
 				 try {
 					client.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+					
 			//		e.printStackTrace();
 				}
 			}
@@ -1019,7 +1022,7 @@ public class HandleReq {
         		   bw.close();
 				 
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				
 		//		e.printStackTrace();
 			}
 			finally
@@ -1027,7 +1030,7 @@ public class HandleReq {
 				 try {
 					client.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+					
 			//		e.printStackTrace();
 				}
 			}
@@ -1087,7 +1090,7 @@ public class HandleReq {
         		bw.close();
  				 
  			} catch (IOException e) {
- 				// TODO Auto-generated catch block
+ 				
  				//e.printStackTrace();
  			}
  			finally
@@ -1095,7 +1098,7 @@ public class HandleReq {
  				 try {
  					client.close();
  				} catch (IOException e) {
- 					// TODO Auto-generated catch block
+ 					
  				//	e.printStackTrace();
  				}
  			}
@@ -1150,7 +1153,7 @@ public class HandleReq {
     	 				bw.close();
     	 				 
     	 			} catch (IOException e) {
-    	 				// TODO Auto-generated catch block
+    	 				
     	 				//e.printStackTrace();
     	 			}
     	 			finally
@@ -1158,7 +1161,7 @@ public class HandleReq {
     	 				 try {
     	 					client.close();
     	 				} catch (IOException e) {
-    	 					// TODO Auto-generated catch block
+    	 				
     	 					//e.printStackTrace();
     	 				}
     	 			}
@@ -1264,7 +1267,7 @@ public class HandleReq {
 	        	 try {
 					bw.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+					
 		//			e.printStackTrace();
 				}
 				
@@ -1374,7 +1377,127 @@ public class HandleReq {
 				 return false;
 			}
 			
-       }
+       }//public Servelt code
+       
+       
+       
+       
+       public ServletsResponse populateResponse()
+       {
+    	   ServletsResponse res=new ServletsResponse();
+    	   
+    	   //addCookie
+    	   //TODO
+    	   
+    	   //addDateHeader(arg0, arg1)
+    	   res.addDateHeader("Date", System.currentTimeMillis());
+    	   
+    	   //addHeader(arg0, arg1)
+    	   //FINISHED
+    	      
+    	   //addIntHeader(arg0, arg1)
+    	   //FINISHED
+    	   
+    	   //containsHeader(arg0)
+    	   //FINSIHED
+    	   
+    	   //encodeRedirectUrl(arg0)
+    	   //FINISHED
+    	   
+    	   //encodeRedirectURL(arg0)
+    	   //TODO
+    	   
+    	   //encodeUrl(arg0)
+    	   //FINISHED
+    	   
+    	   //encodeURL(arg0)
+    	   //TODO
+    	   
+    	   //flushBuffer()
+    	   //TODO
+    	   	   
+    	   //getBufferSize()
+    	   //TODO
+    	   
+    	   //getCharacterEncoding()
+    	  // FINSIHED
+    	   
+    	   //getClass()
+    	   //TODO
+    	   
+    	   //getContentType()
+    	   //FINISHED
+    	   
+    	   //getLocale()
+    	   //FINISHED
+    	   
+    	   //getOutputStream()
+    	  //FINISHED
+    	   
+    	   //getWriter()
+    	   //TODO
+    	   
+    	   //isCommitted()
+    	   //TODO
+    	   
+    	   //reset()
+    	   //TODO
+    	   
+    	   //resetBuffer()
+    	   //TODO
+    	   
+    	   //sendError(arg0)
+    	   //TODO
+    	   
+    	   //sendError(arg0, arg1)
+    	   //TODO
+    	   
+    	   //sendRedirect(arg0)
+    	   //TODO
+    	   
+    	   //setBufferSize(arg0)
+    	   //TODO
+    	   
+    	   //setCharacterEncoding(arg0)
+    	   res.setCharacterEncoding("ISO-8859-1");
+    	   
+    	   //setContentLength(arg0)
+    	   //TODO
+    	   
+    	   //setContentType(arg0)
+    	   res.setCharacterEncoding("text/html");
+    	   
+    	   //setDateHeader(arg0, arg1)
+    	    //FINSIHED
+    	   
+    	   //setHeader(arg0, arg1)
+    	   //FINISHED
+    	   
+    	   //setIntHeader(arg0, arg1)
+    	   //FINSIHED
+    	   
+    	   //setLocale(arg0)
+    	   //FINISHED
+    	   
+    	   //setStatus(arg0)
+    	   //FINSIEHD
+    	   
+    	   //setStatus(arg0, arg1)
+    	   //TODO
+    	 
+    	   
+    	   
+    	   
+    	   
+    	   
+    	   
+    	   
+    	   return res;
+    	   
+       }//Servlet Response
+       
+       
+       
        
        
     public ServletsRequest populateRequest(String method,String url, String parameters,String encoding,ServletsSession fs)
@@ -1693,7 +1816,7 @@ public class HandleReq {
     	
     	
     	return req;
-    }
+    }//Request class
 
        
        

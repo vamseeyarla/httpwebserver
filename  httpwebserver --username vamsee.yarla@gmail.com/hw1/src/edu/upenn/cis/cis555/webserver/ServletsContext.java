@@ -1,6 +1,8 @@
 package edu.upenn.cis.cis555.webserver;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpServlet;
+
 import java.util.*;
 
 /**
@@ -9,10 +11,22 @@ import java.util.*;
 class ServletsContext implements ServletContext {
 	private HashMap<String,Object> attributes;
 	private HashMap<String,String> initParams;
+	private HashMap<String,HttpServlet> servlets;
+	private String displayName;
 	
 	public ServletsContext() {
 		attributes = new HashMap<String,Object>();
 		initParams = new HashMap<String,String>();
+	}
+	
+	public void StoreServlets(HashMap<String,HttpServlet> arg0)
+	{
+		servlets=arg0;
+	}
+	
+	public void servername(String arg0)
+	{
+		displayName=arg0;
 	}
 	
 	public Object getAttribute(String name) {
@@ -26,7 +40,7 @@ class ServletsContext implements ServletContext {
 	}
 	
 	public ServletContext getContext(String name) {
-		return null;
+		return this;
 	}
 	
 	public String getInitParameter(String name) {
@@ -56,7 +70,16 @@ class ServletsContext implements ServletContext {
 	}
 	
 	public String getRealPath(String path) {
-		return null;
+		
+		String xpath="http://localhost:".concat(HttpServer.sport);
+		if(xpath.charAt(0)!='/')
+		{
+			return xpath.concat("/").concat(path);
+		}
+		else
+		{
+			return xpath.concat(path);
+		}
 	}
 	
 	public RequestDispatcher getRequestDispatcher(String name) {
@@ -76,23 +99,38 @@ class ServletsContext implements ServletContext {
 	}
 	
 	public String getServerInfo() {
-		return "Test Harness";
+		return "HTTPServer";
 	}
 	
 	public Servlet getServlet(String name) {
-		return null;
+		return servlets.get(name);
 	}
 	
 	public String getServletContextName() {
-		return "Test Harness";
+		//TODO
+		return "/";
 	}
 	
 	public Enumeration getServletNames() {
-		return null;
+		
+	
+		Vector<String> e=new Vector<String>();
+		for (String servletName : servlets.keySet())
+		{
+			e.add(servletName);
+		}
+	    return e.elements();
+		
 	}
 	
 	public Enumeration getServlets() {
-		return null;
+		
+		Vector<HttpServlet> e=new Vector<HttpServlet>();
+		for (String servletName : servlets.keySet())
+		{
+			e.add(servlets.get(servletName));
+		}
+	    return e.elements();
 	}
 	
 	public void log(Exception exception, String msg) {

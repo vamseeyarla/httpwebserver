@@ -11,6 +11,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.Attributes;
+import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 
@@ -23,6 +24,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class ServletsInit {
 	public static HashMap<String,HttpServlet> servlets; 
+	public static  String webxml=null;
 	
 	static class Handler extends DefaultHandler {
 		public void startElement(String uri, String localName, String qName, Attributes attributes) {
@@ -118,6 +120,9 @@ public class ServletsInit {
 			servlet.init(config);
 			servlets.put(servletName, servlet);
 		}
+		
+			
+		fc.StoreServlets(servlets);
 		return servlets;
 	}
 	
@@ -125,8 +130,13 @@ public class ServletsInit {
 	{
 		boolean status=false;
 try{
+	
 		Handler h = parseWebdotxml(args);
+		webxml=args;
 		ServletsContext context = createContext(h);
+		
+		
+		
 		
 		servlets = createServlets(h, context);
 		

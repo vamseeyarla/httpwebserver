@@ -19,6 +19,7 @@ public class HttpServer implements Runnable {
     
     public static String source;
     public static String xml;
+    public static String sport;
     public static void main(String[] args) {
         
     	boolean threadPoolStatus=false, servletsInitStatus=false;
@@ -33,7 +34,7 @@ public class HttpServer implements Runnable {
             System.out.println("Invalid Set of Arguments");
             System.out.println("Failed to Start HttpServer");
            System.out.println("\n");
-           System.out.println("CORRECT FORMAT:  Port RootDirectory");
+           System.out.println("CORRECT FORMAT:  Port RootDirectory Path2web.xml");
         }
         
         else
@@ -59,7 +60,8 @@ public class HttpServer implements Runnable {
                     Thread.currentThread().sleep(500);
                     ThreadPool.threadQueueHandle=new Thread(new HttpServer(),"QueueThread."+args[0]);
                     ThreadPool.threadQueueHandle.start();
-                    ThreadPool.threadQueueHandleStatus=false;        
+                    ThreadPool.threadQueueHandleStatus=false;   
+                    sport=args[0];
             }
             catch(Exception e)
             {
